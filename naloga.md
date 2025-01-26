@@ -1,9 +1,8 @@
-<!--
+# Requirements
 - Minimum number of classes is 8 (more if needed).
 - Minimum number of elements in a class is 5 (e.g. fields, properties, methods, etc.).
 - Minimum number of objects in a solution is 10 (e.g. cars, products, players, etc.).
 - Minimum number of loops to go through with objects is 2 (e.g. a foreach loop to output values ​​associated with objects).
--->
 
 # Plan
 ## Classes
@@ -11,12 +10,12 @@
     - id
     - registration_date
     - name
-    - surname
-    - is_admin
+    - level
 2. BasicAgent()
     - id
     - name
     - prompt
+    - .Reply()
     2.1 AssistantAgent
     2.2 AnalystAgent
 3. Conversation()
@@ -32,10 +31,7 @@
     - title
     - content
     - is_completed
-5. ConversationManager()
-    - CreateConversation()
-6. InsightManager()
-    - id
-    - content
-    - user_id
+5. Menu()
+    - .Run()
+    - .CreateConversation()
     - .CreateInsight()
