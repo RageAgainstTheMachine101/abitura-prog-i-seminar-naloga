@@ -16,8 +16,8 @@
     - name
     - prompt
     - .Reply()
-    2.1 AssistantAgent
-    2.2 AnalystAgent
+    - 2.1 AssistantAgent
+    - 2.2 AnalystAgent
 3. Conversation()
     - id
     - created_date
