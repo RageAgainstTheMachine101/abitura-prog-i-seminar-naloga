@@ -129,3 +129,14 @@ This abstraction would:
 5. Simplify testing by allowing mock implementations of the base class
 
 Both `InsightCollection` and `ConversationCollection` could then inherit from this base class, focusing only on their specific functionality while sharing common collection management code.
+
+> [!note] The same pattern could be applied to the `Insight` and `Conversation` classes, resulting in a more modular and maintainable codebase.
+
+## Features
+The application could benefit from enhanced gamification elements to increase user engagement. While the `User` class already includes a basic level-up mechanism through its experience points system, this could be expanded to include:
+- Achievement system for completing insights and maintaining conversation streaks
+- Rewards for regular app usage and completing mental health goals
+- Visual progression indicators and level-up notifications
+- Customizable user profiles and badges
+
+These gamification features would leverage the existing `User.AddExperience()` method while adding new engagement mechanics to encourage consistent app usage and goal completion.
