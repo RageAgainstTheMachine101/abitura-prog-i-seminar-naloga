@@ -2,7 +2,7 @@ namespace MentalApp
 {
     public class Menu
     {
-        const string welcomeMessage = "Press any key to Feel Better";
+        const string welcomeMessage = "\nPress any key to Feel Better";
         const string exit = "\n0 - Exit";
         const string loginMenu = "\nInsert choice number:\n1 - Sign Up" + exit;
         const string startConversation = "\nInsert choice number:\n1 - Start Conversation";
@@ -10,15 +10,18 @@ namespace MentalApp
         const string getInsight = "\n3 - Get Insight";
         const string mainMenu = startConversation + viewConversations + exit;
         const string mainMenuExpanded = startConversation + viewConversations + getInsight + exit;
+        const string goodByeMessage = "\nThank you for using MentalApp. Goodbye!\n";
 
         public static void Run()
         {
             Console.WriteLine(welcomeMessage);
             Console.ReadKey();
 
-            User user = null;
-            Insight insight = null;
+            User? user = null;
+            Insight? insight = null;
             ConversationCollection conversations = new();
+            InsightCollection insights = new();
+            var analyst = new AnalystAgent("Analyst", "Analyze conversations and provide insights.");
             
             while (true)
             {
@@ -37,7 +40,7 @@ namespace MentalApp
                     if (choice == 1)
                     {
                         user = new();
-                        Console.WriteLine($"Welcome! Your user ID is: {user.Id}");
+                        Console.WriteLine($"\nWelcome! Your user ID is: {user.Id}");
                     }
                 }
                 else
@@ -59,9 +62,14 @@ namespace MentalApp
 
                     switch (choice)
                     {
+                        case 0: // Exit program
+                            Console.WriteLine(goodByeMessage);
+                            return;
                         case 1: // Start new conversation
                             var conversation = conversations.CreateConversation(user.Id);
-                            HandleConversation(conversation);
+                            Insight? insightVar = null;
+                            HandleConversation(conversation, analyst, insights, ref insightVar);
+                            insight = insightVar;
                             break;
                         case 2: // View previous conversations
                             ShowConversationHistory(conversations, user.Id);
@@ -69,25 +77,34 @@ namespace MentalApp
                         case 3: // Get insight (only if available)
                             if (insight != null)
                             {
-                                // Handle insight logic
+                                Console.WriteLine("\nYour insights:");
+                                var userInsights = insights.GetUserInsights(user.Id);
+                                foreach (var ins in userInsights)
+                                {
+                                    Console.WriteLine($"Insight from conversation #{ins.ConversationId}:");
+                                    Console.WriteLine($"  {ins.Content}");
+                                    Console.WriteLine($"  Created on: {ins.CreatedDate}\n");
+                                }
+                                Console.WriteLine("Press any key to return to main menu...");
+                                Console.ReadKey();
                             }
                             break;
                     }
                 }
             }
             
-            Console.WriteLine("Thank you for using MentalApp. Goodbye!");
+            Console.WriteLine(goodByeMessage);
         }
 
-        private static void HandleConversation(Conversation conversation)
+        private static void HandleConversation(Conversation conversation, AnalystAgent analyst, InsightCollection insights, ref Insight? insight)
         {
             Console.WriteLine($"\nConversation #{conversation.Id} started. Type 'exit' to end the conversation.");
-            var companion = new CompanionAgent("Assistant", "I am your companion");
+            var companion = new CompanionAgent("Assistant", "Be a helpful assistant.");
             
             while (true)
             {
                 Console.Write("You: ");
-                string input = Console.ReadLine();
+                string? input = Console.ReadLine();
                 
                 if (input?.ToLower() == "exit")
                     break;
@@ -97,6 +114,11 @@ namespace MentalApp
                 Console.WriteLine($"Assistant: {aiResponse}");
                 conversation.AddMessage($"Assistant: {aiResponse}");
             }
+
+            // Create insight after conversation ends using the analyst agent
+            var insightContent = analyst.CreateInsight(conversation.UserId, conversation.Id);
+            insight = insights.CreateInsight(conversation.UserId, conversation.Id, insightContent.Content);
+            Console.WriteLine($"\nAnalyst created an insight from your conversation: {insight.Content}");
         }
 
         private static void ShowConversationHistory(ConversationCollection conversations, int userId)
